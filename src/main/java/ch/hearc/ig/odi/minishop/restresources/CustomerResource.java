@@ -6,20 +6,14 @@ package ch.hearc.ig.odi.minishop.restresources;
 
 import ch.hearc.ig.odi.minishop.business.Customer;
 import ch.hearc.ig.odi.minishop.business.Order;
-import ch.hearc.ig.odi.minishop.exception.CustomerException;
+import ch.hearc.ig.odi.minishop.business.Product;
+import ch.hearc.ig.odi.minishop.exception.*;
 import ch.hearc.ig.odi.minishop.exception.NotFoundException;
-import ch.hearc.ig.odi.minishop.exception.OrderException;
 import ch.hearc.ig.odi.minishop.services.PersistenceService;
 import java.text.ParseException;
 import java.util.List;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 public class CustomerResource {
@@ -44,24 +38,104 @@ public class CustomerResource {
                 return persistenceService.getCustomerByID(customerid);
             } catch (CustomerException e) {
                 e.printStackTrace();
-                throw new NotFoundException("the order does not exist");
+                throw new NotFoundException("the customer does not exist");
             }
         }
 
         @GET
         @Path("{username}")
-        public Customer usernameGet(@PathParam("username") Long username) {
+        public Customer usernameGet(@PathParam("customerid") Long customerid) {
             try {
-                return persistenceService.getCustomerByUsername(username);
+                return persistenceService.getCustomerByID(customerid);
             } catch (CustomerException e) {
                 e.printStackTrace();
-                throw new NotFoundException("the order does not exist");
+                throw new NotFoundException("the customer does not exist");
             }
         }
 
-        @POST
-        public Customer customerPost(@FormParam("cartid") Long cartid) throws ParseException, CustomerException {
-            return persistenceService.createCustomer(cartid);
+        @GET
+        @Path("{firstName}")
+        public Customer firstNameGet(@PathParam("customerid") Long customerid) {
+            try {
+                return persistenceService.getCustomerByID(customerid);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NotFoundException("the customer does not exist");
+            }
         }
+
+        @GET
+        @Path("{lastName}")
+        public Customer lastNameGet(@PathParam("customerid") Long customerid) {
+            try {
+                return persistenceService.getCustomerByID(customerid);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NotFoundException("the customer does not exist");
+            }
+        }
+
+        @GET
+        @Path("{email}")
+        public Customer emailGet(@PathParam("customerid") Long customerid) {
+            try {
+                return persistenceService.getCustomerByID(customerid);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NotFoundException("the customer does not exist");
+            }
+        }
+
+        @GET
+        @Path("{phone}")
+        public Customer phoneGet(@PathParam("customerid") Long customerid) {
+            try {
+                return persistenceService.getCustomerByID(customerid);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NotFoundException("the customer does not exist");
+            }
+        }
+
+        //25.03.19 : OK juste
+        @POST
+        public Customer customerPost(@FormParam("username") String username,
+                                     @FormParam("firstName") String firstname,
+                                     @FormParam("lastName") String lastname,
+                                     @FormParam("email") String email,
+                                     @FormParam("phone") String phone) throws ParseException, CustomerException {
+            return persistenceService.createAndPersistCustomer(
+                    username,
+                    firstname,
+                    lastname,
+                    email,
+                    phone);
+        }
+
+
+        @DELETE
+        @Path("{id}")
+        @Consumes(MediaType.APPLICATION_JSON)
+        public void deleteCustomer(@PathParam("id") Long customerId) {
+            try {
+                persistenceService.deleteProduct(id);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NullFormException("customer not deleted.");
+            }
+        }
+
+        @PUT
+        @Path("{id}")
+        @Consumes(MediaType.APPLICATION_JSON)
+        public Customer updateCustomer(@PathParam("id") Long customerId, Customer customer) {
+            try {
+                return persistenceService.updateCustomer(customerId, customer);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NullFormException("customer couldn't have been updated.");
+            }
+        }
+    }
 }
 
