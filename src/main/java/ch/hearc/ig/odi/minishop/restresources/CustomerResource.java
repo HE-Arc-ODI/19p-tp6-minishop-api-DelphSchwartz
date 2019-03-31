@@ -42,62 +42,6 @@ public class CustomerResource {
             }
         }
 
-        @GET
-        @Path("{username}")
-        public Customer usernameGet(@PathParam("customerid") Long customerid) {
-            try {
-                return persistenceService.getCustomerByID(customerid);
-            } catch (CustomerException e) {
-                e.printStackTrace();
-                throw new NotFoundException("the customer does not exist");
-            }
-        }
-
-        @GET
-        @Path("{firstName}")
-        public Customer firstNameGet(@PathParam("customerid") Long customerid) {
-            try {
-                return persistenceService.getCustomerByID(customerid);
-            } catch (CustomerException e) {
-                e.printStackTrace();
-                throw new NotFoundException("the customer does not exist");
-            }
-        }
-
-        @GET
-        @Path("{lastName}")
-        public Customer lastNameGet(@PathParam("customerid") Long customerid) {
-            try {
-                return persistenceService.getCustomerByID(customerid);
-            } catch (CustomerException e) {
-                e.printStackTrace();
-                throw new NotFoundException("the customer does not exist");
-            }
-        }
-
-        @GET
-        @Path("{email}")
-        public Customer emailGet(@PathParam("customerid") Long customerid) {
-            try {
-                return persistenceService.getCustomerByID(customerid);
-            } catch (CustomerException e) {
-                e.printStackTrace();
-                throw new NotFoundException("the customer does not exist");
-            }
-        }
-
-        @GET
-        @Path("{phone}")
-        public Customer phoneGet(@PathParam("customerid") Long customerid) {
-            try {
-                return persistenceService.getCustomerByID(customerid);
-            } catch (CustomerException e) {
-                e.printStackTrace();
-                throw new NotFoundException("the customer does not exist");
-            }
-        }
-
-        //25.03.19 : OK juste
         @POST
         public Customer customerPost(@FormParam("username") String username,
                                      @FormParam("firstName") String firstname,
