@@ -72,9 +72,9 @@ public class CustomerResource {
         @PUT
         @Path("{id}")
         @Consumes(MediaType.APPLICATION_JSON)
-        public Customer updateCustomer(@PathParam("id") Long customerId, Customer customer) {
+        public Customer updateCustomer(@PathParam("id") Long custId, Customer customer) {
             try {
-                return persistenceService.updateCustomer(customerId, customer);
+                return persistenceService.updateCustomer(custId, customer);
             } catch (CustomerException e) {
                 e.printStackTrace();
                 throw new NullFormException("customer couldn't have been updated.");
