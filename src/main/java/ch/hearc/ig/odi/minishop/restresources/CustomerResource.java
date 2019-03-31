@@ -13,6 +13,7 @@ import ch.hearc.ig.odi.minishop.services.PersistenceService;
 import java.text.ParseException;
 import java.util.List;
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -78,6 +79,18 @@ public class CustomerResource {
             } catch (CustomerException e) {
                 e.printStackTrace();
                 throw new NullFormException("customer couldn't have been updated.");
+            }
+        }
+
+        @DELETE
+        @Path("{id}")
+        @Consumes(MediaType.APPLICATION_JSON)
+        public void deleteCustomer(@PathParam("id") Long customerId) {
+            try {
+                persistenceService.deleteCustomer(customerId);
+            } catch (CustomerException e) {
+                e.printStackTrace();
+                throw new NullFormException("customer not deleted.");
             }
         }
     }
