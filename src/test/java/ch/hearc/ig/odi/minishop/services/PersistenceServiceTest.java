@@ -12,6 +12,7 @@ import javax.persistence.Persistence;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 
 public class PersistenceServiceTest {
 
@@ -40,45 +41,58 @@ public class PersistenceServiceTest {
   public void createAndPersistCustomer() {
     Customer expectedCustomer;
     String expectedUserName = "acooper";
-    expectedCustomer = persistenceService.createAndPersistCustomer(expectedUserName,"alice","cooper","acooper@hell.net","666 55 55 55");
-    Long expectedCustomerId = expectedCustomer.getCustomerId();
+      try {
+          expectedCustomer = persistenceService.createAndPersistCustomer(expectedUserName, "alice", "cooper", "acooper@hell.net","666 55 55 55");
+          Long expectedCustomerId = expectedCustomer.getCustomerId();
+          Customer actualCustomer = persistenceService.getCustomerByID(expectedCustomerId);
 
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    Customer actualCustomer = entityManager.find(Customer.class, expectedCustomerId);
-    entityManager.close();
-
-    assertSame(actualCustomer.getUsername(), expectedUserName);
+          assertSame(actualCustomer.getUsername(), expectedUserName);
+      }catch(CustomerException e) {
+          e.printStackTrace();
+      }
   }
 
   @Test
   public void getCustomerByID() {
-    long expectedCustomerId = 2l;
-    String expectedUsername = "2mississipi";
+      try {
+          long expectedCustomerId = 2l;
+          String expectedUsername = "2mississipi";
 
-    persistenceService.createAndPersistCustomer("1mississipi","1","1","acooper@hell.net","00000000001");
-    persistenceService.createAndPersistCustomer("2mississipi","2","2","acooper@hell.net","00000000002");
-    persistenceService.createAndPersistCustomer("3mississipi","3","3","acooper@hell.net","00000000003");
+          persistenceService.createAndPersistCustomer("1mississipi", "1", "1", "acooper@hell.net", "00000000001");
+          persistenceService.createAndPersistCustomer("2mississipi", "2", "2", "acooper@hell.net", "00000000002");
+          persistenceService.createAndPersistCustomer("3mississipi", "3", "3", "acooper@hell.net", "00000000003");
 
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    Customer actualCustomer = entityManager.find(Customer.class, expectedCustomerId);
+          Customer actualCustomer = new Customer();
+          actualCustomer = persistenceService.getCustomerByID((long) 21);
 
-    assertEquals(expectedUsername, actualCustomer.getUsername());
+          assertEquals(expectedUsername, actualCustomer.getUsername());
+      } catch (CustomerException e) {
+          e.printStackTrace();
+      }
   }
 
   @Test
   public void deleteCustomer() throws CustomerException {
-    Customer expectedCustomer;
+      CustomerException exception = null;
+      try{
+
+          Customer expectedCustomer;
 
     expectedCustomer = persistenceService.createAndPersistCustomer("deleteMe","alice","cooper","acooper@hell.net","666 55 55 55");
     long idToDelete = expectedCustomer.getCustomerId();
 
     persistenceService.deleteCustomer(idToDelete);
 
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    Customer deletedCustomer = entityManager.find(Customer.class, idToDelete);
-    entityManager.close();
+          Customer deletedCustomer = new Customer();
+
+          deletedCustomer = persistenceService.getCustomerByID(idToDelete);
 
     assertNull(deletedCustomer);
+      }catch(CustomerException e){
+          exception = e;
+      }
+
+      Assert.assertEquals("does not exist", exception.getMessage());
   }
 
   @Test
@@ -101,9 +115,8 @@ public class PersistenceServiceTest {
 
     persistenceService.updateCustomer(idToUpdate, expectedCustomer);
 
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    Customer actualCustomer = entityManager.find(Customer.class, idToUpdate);
-    entityManager.close();
+      Customer actualCustomer = new Customer();
+      actualCustomer = persistenceService.getCustomerByID(idToUpdate);
 
     assertEquals(updatedFirstName, actualCustomer.getFirstName());
     assertEquals(updatedLastName, actualCustomer.getLastName());
