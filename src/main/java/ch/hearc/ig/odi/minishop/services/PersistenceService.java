@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.glassfish.jersey.internal.inject.Custom;
 
 public class PersistenceService {
 
@@ -65,11 +66,13 @@ public class PersistenceService {
    * @return a list
    */
   public ArrayList<Customer> getAllCustomers() {
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    /*EntityManager entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     List<Customer> customers = entityManager.createQuery("from Customer", Customer.class)
         .getResultList();
-    return (ArrayList<Customer>) customers;
+    return (ArrayList<Customer>) customers;*/
+    ArrayList<Customer> customers = new ArrayList<>(this.customers.value());
+    return customers;
   }
 
 
@@ -79,16 +82,16 @@ public class PersistenceService {
    * @return the customer object created
    */
   public Customer createAndPersistCustomer(String username, String firstname, String lastname,
-      String email,
-      String phone) {
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
-    entityManager.getTransaction().begin();
-    Customer newCustomer = new Customer(username, firstname, lastname, email,
-        phone);
-    entityManager.persist(newCustomer);
-    entityManager.getTransaction().commit();
-    entityManager.close();
-    return newCustomer;
+      String email, String phone) throws CustomerException{
+      if (username != null && firstname != null && lastname != null && email != null
+              && phone != null) {
+        Customer newCustomer = new Customer(idCounterCustomer++, username, firstname, lastname,
+                email, phone);
+        this.customers.put(newCustomer.getCustomerId(), newCustomer);
+        return this.customers.get(newCustomer.getCustomerId());
+      } else {
+        throw new CustomerException("customer can not be null");
+      }
   }
 
   /**
@@ -98,12 +101,15 @@ public class PersistenceService {
    * @return an objet customer
    */
   public Customer getCustomerByID(Long customerid) throws CustomerException {
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    /*EntityManager entityManager = entityManagerFactory.createEntityManager();
     Customer actualCustomer = entityManager.find(Customer.class, customerid);
     if (actualCustomer != null) {
-      return actualCustomer;
+      return actualCustomer;*/
+    Customer cust = this.customers.get(customerid);
+    if (cust != null) {
+      return cust;
     } else {
-      throw new CustomerException("Customer with id " + customerid + " not found");
+      throw new CustomerException("Customer not found");
     }
   }
 
@@ -115,15 +121,16 @@ public class PersistenceService {
    * @throws CustomerException if id does not match any existing customer
    */
   public void deleteCustomer(Long customerId) throws CustomerException {
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    /*EntityManager entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     Customer customer = entityManager.find(Customer.class, customerId);
     if (customer == null) {
       throw new CustomerException("Customer with id " + customerId + " not found");
+    */
+    Customer custmerToDelete = this.customers.remove(customerId);
+    if (custmerToDelete == null) {
+      throw new CustomerException("customer can not be deleted");
     }
-    entityManager.remove(customer);
-    entityManager.getTransaction().commit();
-    entityManager.close();
 
   }
 
@@ -136,12 +143,23 @@ public class PersistenceService {
    * @throws CustomerException if the id does not match any existing customer
    */
   public Customer updateCustomer(Long customerId, Customer newCustomer) throws CustomerException {
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    /*EntityManager entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     Customer customer = entityManager.find(Customer.class, customerId);
     customer.update(newCustomer);
     entityManager.getTransaction().commit();
     return customer;
+    */
+    Customer cust = this.customers.get(customerId);
+    if (cust != null) {
+      customers.put(newCustomer.getCustomerId(), newCustomer);
+      if (newCustomer.getCustomerId().equals(customerId)) {
+        //
+      }
+      return newCustomer;
+    } else {
+      throw new CustomerException("customer can not be deleted");
+    }
   }
 
   /**
