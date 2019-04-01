@@ -59,18 +59,6 @@ public class CustomerResource {
         }
 
 
-        @DELETE
-        @Path("{id}")
-        @Consumes(MediaType.APPLICATION_JSON)
-        public void deleteCustomer(@PathParam("id") Long customerId) {
-            try {
-                persistenceService.deleteProduct(customerId);
-            } catch (CustomerException e) {
-                e.printStackTrace();
-                throw new NullFormException("customer not deleted.");
-            }
-        }
-
         @PUT
         @Path("{id}")
         @Consumes(MediaType.APPLICATION_JSON)
