@@ -71,7 +71,7 @@ public class PersistenceService {
     List<Customer> customers = entityManager.createQuery("from Customer", Customer.class)
         .getResultList();
     return (ArrayList<Customer>) customers;*/
-    ArrayList<Customer> customers = new ArrayList<>(this.customers.value());
+    ArrayList<Customer> customers = new ArrayList<Customer>(this.customers.value());
     return customers;
   }
 
